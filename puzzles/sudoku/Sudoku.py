@@ -7,6 +7,9 @@ from solver.NumberPlaced import NumberPlaced
 
 class Sudoku(AbstractPuzzle):
 
+    def from_hash(self, hash_string):
+        return Sudoku(hash_string)
+
     def __init__(self, clues):
         super().__init__()
         self.solved_grid = np.ndarray((9, 9))

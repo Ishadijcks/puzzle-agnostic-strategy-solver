@@ -37,9 +37,13 @@ class AbstractPuzzle(ABC):
         raise NotImplementedError("Please Implement this method")
 
     @abstractmethod
-    def get_hash(self) -> bool:
+    def get_hash(self) -> str:
         raise NotImplementedError("Please Implement this method")
 
     @abstractmethod
     def remove_removals(self, removals):
+        raise NotImplementedError("Please Implement this method")
+
+    @abstractmethod
+    def from_hash(self, hash_string):
         raise NotImplementedError("Please Implement this method")
