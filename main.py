@@ -1,3 +1,7 @@
+from puzzles.raatsel.instances.SoloRaatsel import get_realistic_2x2_raatsel
+from puzzles.raatsel.strategies.EliminateCategories import EliminateCategories
+from puzzles.raatsel.strategies.EliminatePlacedElements import EliminatePlacedElements
+from puzzles.raatsel.strategies.EliminateWords import EliminateWords
 from puzzles.sudoku.instances.sudoku_easy_1 import get_easy1
 from puzzles.sudoku.strategies.HiddenSingle import HiddenSingle
 from puzzles.sudoku.strategies.NakedSingle import NakedSingle
@@ -9,6 +13,13 @@ def solve_easy_sudoku():
     sudoku.solve([HiddenSingle, NakedSingle], True)
     sudoku.print_state()
 
+
+def solve_realistic_raatsel():
+    raatsel = get_realistic_2x2_raatsel()
+    raatsel.solve([EliminateCategories, EliminateWords, EliminatePlacedElements])
+    raatsel.print_state()
+
+
 def rate_easy_sudoku():
     sudoku = get_easy1()
     rater = Rater(10)
@@ -16,7 +27,8 @@ def rate_easy_sudoku():
 
 
 def main():
-    rate_easy_sudoku()
+    solve_realistic_raatsel()
+
 
 if __name__ == '__main__':
     main()

@@ -22,6 +22,7 @@ class AbstractPuzzle(ABC):
         removals = []
 
         for strategy in strategies:
+            print(removals)
             removals += strategy.apply(self)
 
         numbers_placed = self.remove_removals(removals)
