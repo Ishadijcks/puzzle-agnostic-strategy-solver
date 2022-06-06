@@ -1,4 +1,5 @@
 from puzzles.AbstractStrategy import AbstractStrategy
+from solver.RemoveCandidate import RemoveCandidate
 
 
 class EliminateCategories(AbstractStrategy):
@@ -14,7 +15,7 @@ class EliminateCategories(AbstractStrategy):
 
     @staticmethod
     def apply(raatsel):
-        has_done_anything = False
+        removals = []
 
         for category in range(0, len(raatsel.category_candidates)):
             candidates = raatsel.category_candidates[category]
@@ -33,8 +34,9 @@ class EliminateCategories(AbstractStrategy):
                         continue
 
             if len(candidates_to_remove) > 0:
-                has_done_anything = True
-                for candidate_to_remove in candidates_to_remove:
-                    raatsel.category_candidates[category].remove(candidate_to_remove)
+                removals.append(
+                    RemoveCandidate("category", category, candidates_to_remove, EliminateCategories.get_name(),
+                                    EliminateCategories.get_difficulty())
+                )
 
-        return has_done_anything
+        return removals

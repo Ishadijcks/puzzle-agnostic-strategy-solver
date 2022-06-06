@@ -34,5 +34,4 @@ class EliminateWords(AbstractStrategy):
             if AbstractStrategy.debug:
                 print("Cell", cell_index, "Removing candidates", candidates_to_remove)
 
-        print(removals)
         return removals

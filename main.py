@@ -17,7 +17,7 @@ def solve_easy_sudoku():
 def solve_realistic_raatsel():
     raatsel = get_realistic_2x2_raatsel()
     raatsel.solve([
-        # EliminateCategories,
+        EliminateCategories,
         EliminateWords,
         # EliminatePlacedElements
     ])
