@@ -110,12 +110,14 @@ class AbstractRaatsel(AbstractPuzzle):
 
     def remove_removals(self, removals):
         for removal in removals:
-            if removal.x == "cell":
+            if removal.x == "word":
                 for candidate in removal.candidates:
-                    self.word_candidates[removal.y].remove(candidate)
+                    if candidate in self.word_candidates[removal.y]:
+                        self.word_candidates[removal.y].remove(candidate)
             if removal.x == "category":
                 for candidate in removal.candidates:
-                    self.category_candidates[removal.y].remove(candidate)
+                    if candidate in self.category_candidates[removal.y]:
+                        self.category_candidates[removal.y].remove(candidate)
 
     def from_hash(self, hash_string):
         pass

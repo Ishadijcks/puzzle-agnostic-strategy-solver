@@ -27,7 +27,7 @@ class EliminateWords(AbstractStrategy):
 
             if candidates_to_remove:
                 removals.append(
-                    RemoveCandidate("cell", cell_index, candidates_to_remove, EliminateWords.get_name(),
+                    RemoveCandidate("word", cell_index, candidates_to_remove, EliminateWords.get_name(),
                                     EliminateWords.get_difficulty())
                 )
 

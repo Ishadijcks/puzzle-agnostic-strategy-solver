@@ -19,7 +19,7 @@ def solve_realistic_raatsel():
     raatsel.solve([
         EliminateCategories,
         EliminateWords,
-        # EliminatePlacedElements
+        EliminatePlacedElements
     ])
     raatsel.print_state()
     print(raatsel.is_solved())
