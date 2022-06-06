@@ -109,11 +109,13 @@ class AbstractRaatsel(AbstractPuzzle):
         pass
 
     def remove_removals(self, removals):
-        pass
+        for removal in removals:
+            if removal.x == "cell":
+                for candidate in removal.candidates:
+                    self.word_candidates[removal.y].remove(candidate)
 
     def from_hash(self, hash_string):
         pass
-
 
     def __str__(self):
         return "Raatsel\n" \

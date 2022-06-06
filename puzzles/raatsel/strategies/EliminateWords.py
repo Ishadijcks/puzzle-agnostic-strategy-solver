@@ -1,4 +1,5 @@
 from puzzles.AbstractStrategy import AbstractStrategy
+from solver.RemoveCandidate import RemoveCandidate
 
 
 class EliminateWords(AbstractStrategy):
@@ -15,7 +16,7 @@ class EliminateWords(AbstractStrategy):
 
     @staticmethod
     def apply(raatsel):
-        has_done_anything = False
+        removals = []
         for cell_index in range(0, raatsel.get_word_cell_count()):
             candidates = raatsel.word_candidates[cell_index]
 
@@ -24,10 +25,14 @@ class EliminateWords(AbstractStrategy):
                 if not raatsel.can_word_be_in_cell(word_candidate, cell_index):
                     candidates_to_remove.append(word_candidate)
 
+            if candidates_to_remove:
+                removals.append(
+                    RemoveCandidate("cell", cell_index, candidates_to_remove, EliminateWords.get_name(),
+                                    EliminateWords.get_difficulty())
+                )
+
             if AbstractStrategy.debug:
                 print("Cell", cell_index, "Removing candidates", candidates_to_remove)
 
-            for candidate in candidates_to_remove:
-                raatsel.word_candidates[cell_index].remove(candidate)
-                has_done_anything = True
-        return has_done_anything
+        print(removals)
+        return removals

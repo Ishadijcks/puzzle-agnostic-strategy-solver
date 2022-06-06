@@ -16,8 +16,13 @@ def solve_easy_sudoku():
 
 def solve_realistic_raatsel():
     raatsel = get_realistic_2x2_raatsel()
-    raatsel.solve([EliminateCategories, EliminateWords, EliminatePlacedElements])
+    raatsel.solve([
+        # EliminateCategories,
+        EliminateWords,
+        # EliminatePlacedElements
+    ])
     raatsel.print_state()
+    print(raatsel.is_solved())
 
 
 def rate_easy_sudoku():
