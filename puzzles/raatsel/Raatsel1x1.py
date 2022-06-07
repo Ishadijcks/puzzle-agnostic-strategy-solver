@@ -1,4 +1,4 @@
-from puzzles.raatsel.Raatsel import AbstractRaatsel
+from puzzles.raatsel.AbstractRaatsel import AbstractRaatsel
 
 
 class Raatsel1x1(AbstractRaatsel):

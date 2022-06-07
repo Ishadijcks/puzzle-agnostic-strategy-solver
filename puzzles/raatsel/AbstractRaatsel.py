@@ -1,3 +1,4 @@
+import os
 from abc import abstractmethod
 import numpy as np
 from tabulate import tabulate
@@ -12,6 +13,8 @@ class AbstractRaatsel(AbstractPuzzle):
         self.available_words = words
         self.available_categories = categories
         self.available_edges = edges
+        self.available_groups = edges + categories
+
         self.matrix = matrix
 
         assert len(self.available_words) == self.get_word_cell_count()
@@ -106,7 +109,23 @@ class AbstractRaatsel(AbstractPuzzle):
         return 3 * self.size * (self.size - 1) + 1
 
     def get_hash(self) -> str:
-        pass
+        words = []
+        for w in self.word_candidates:
+            if len(w) == 1:
+                words.append(w[0])
+            else:
+                words.append("0")
+        word_hash = ','.join(words)
+
+        categories = []
+        for c in self.category_candidates:
+            if len(c) == 1:
+                categories.append(c[0])
+            else:
+                categories.append("0")
+        category_hash = ','.join(categories)
+
+        return word_hash + "-" + category_hash
 
     def remove_removals(self, removals):
         for removal in removals:
@@ -121,6 +140,28 @@ class AbstractRaatsel(AbstractPuzzle):
 
     def from_hash(self, hash_string):
         pass
+
+    def to_glasgow(self):
+        res = ""
+        for y in range(0, len(self.matrix)):
+            for x in range(0, len(self.matrix[0])):
+                if self.matrix[y][x] == 1:
+                    res += self.available_words[y] + ">" + self.available_groups[x] + '\n'
+        return res
+
+    def write_glasgow_to_file(self, file_name) -> None:
+        f = open(os.path.join('cache', file_name), "w")
+        f.write(self.to_glasgow())
+        f.close()
+
+    def is_impossible(self):
+        for c in self.category_candidates:
+            if len(c) == 0:
+                return True
+        for w in self.word_candidates:
+            if len(w) == 0:
+                return True
+        return False
 
     def __str__(self):
         return "Raatsel\n" \

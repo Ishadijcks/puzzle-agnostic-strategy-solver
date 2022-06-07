@@ -10,6 +10,10 @@ class AbstractPuzzle(ABC):
             has_done_anything = self.solve_step(strategies)
             if debug:
                 self.print_state()
+            if self.is_impossible():
+                if debug:
+                    print("Solving was impossible")
+                return False
             if not has_done_anything:
                 if debug:
                     print("Nothing changed this iteration...")
@@ -47,3 +51,8 @@ class AbstractPuzzle(ABC):
     @abstractmethod
     def from_hash(self, hash_string):
         raise NotImplementedError("Please Implement this method")
+
+    @abstractmethod
+    def is_impossible(self):
+        raise NotImplementedError("Please Implement this method")
+
