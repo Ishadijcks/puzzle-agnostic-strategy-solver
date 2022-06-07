@@ -58,7 +58,7 @@ def test_generate_m():
 
 
 def main():
-    raatsel = RaatselGenerator.generate_from_file(WordGraph.from_glasgow_file("manual.txt"), 'cache/manual.txt',
+    raatsel = RaatselGenerator.generate_from_file(WordGraph.from_glasgow_file("pole.txt"), 'cache/pole.txt',
                                                   raatsel_strategies, RaatselSize.TwoByTwo)
     raatsel.solve(raatsel_strategies)
     print("Solvable?", raatsel.is_solved())

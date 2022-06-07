@@ -62,28 +62,31 @@ class RaatselGenerator:
             database_graph.write_glasgow_to_file('database.txt')
             pattern_file = os.path.join('cache', 'database.txt')
 
-            process = subprocess.Popen(['./bin/glasgow_subgraph_solver', pattern_file, target_file],
-                                       stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE, text=True)
+            process = subprocess.Popen(
+                ['./bin/glasgow_subgraph_solver', '--print-all-solutions', '--parallel', '--timeout', '30',
+                 pattern_file, target_file],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, text=True)
             stdout, stderr = process.communicate()
             if stderr:
                 print("failed", stderr)
             # assert not stderr
-            words, categories, edges = RaatselGenerator.parse_solutions(stdout, size)
+            solutions = RaatselGenerator.parse_multiple_solutions(stdout, size)
+            for words, categories, edges in solutions:
 
-            matrix = word_graph.to_matrix(words, categories, edges)
+                matrix = word_graph.to_matrix(words, categories, edges)
 
-            if size == RaatselSize.OneByOne:
-                raatsel = Raatsel1x1(words, categories, edges, matrix)
-            else:
-                raatsel = Raatsel2x2(words, categories, edges, matrix)
+                if size == RaatselSize.OneByOne:
+                    raatsel = Raatsel1x1(words, categories, edges, matrix)
+                else:
+                    raatsel = Raatsel2x2(words, categories, edges, matrix)
 
-            raatsel.solve(strategies)
+                raatsel.solve(strategies)
 
-            if raatsel.is_solved():
-                break
-            else:
-                print("solving failed")
+                if raatsel.is_solved():
+                    break
+                else:
+                    print("solving failed")
 
         print("Successfully generated raatsel!", raatsel)
         return raatsel
@@ -103,6 +106,15 @@ class RaatselGenerator:
         return RaatselGenerator.parse_mapping(result)
 
     @staticmethod
+    def parse_multiple_solutions(solutions_string, size):
+        output = solutions_string.split("\n")
+        results = []
+        for line in output:
+            if line.startswith('mapping'):
+                results.append(RaatselGenerator.parse_mapping(line))
+        return results
+
+    @staticmethod
     def parse_mapping(mapping):
         result = mapping.replace(") (", "|").replace("mapping = (", "").replace(")", "").replace(" ", "")
         mapping = result.split("|")
@@ -110,14 +122,18 @@ class RaatselGenerator:
         words = [None] * 30
         categories = [None] * 7
         edges = [None] * 6
-        for entry in mapping:
-            split = entry.split("->")
 
-            index = int(split[0][1:])
-            if 'W' in split[0]:
-                words[index] = split[1]
-            if 'C' in split[0]:
-                categories[index] = split[1]
-            if 'E' in split[0]:
-                edges[index] = split[1]
-        return words, categories, edges
+        try:
+            for entry in mapping:
+                split = entry.split("->")
+
+                index = int(split[0][1:])
+                if 'W' in split[0]:
+                    words[index] = split[1]
+                if 'C' in split[0]:
+                    categories[index] = split[1]
+                if 'E' in split[0]:
+                    edges[index] = split[1]
+            return words, categories, edges
+        except:
+            return words, categories, edges
