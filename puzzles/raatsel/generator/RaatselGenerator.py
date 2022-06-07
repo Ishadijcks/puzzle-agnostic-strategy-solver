@@ -68,7 +68,6 @@ class RaatselGenerator:
             stdout, stderr = process.communicate()
             if stderr:
                 print("failed", stderr)
-                exit(0)
             # assert not stderr
             words, categories, edges = RaatselGenerator.parse_solutions(stdout, size)
 
@@ -78,9 +77,8 @@ class RaatselGenerator:
                 raatsel = Raatsel1x1(words, categories, edges, matrix)
             else:
                 raatsel = Raatsel2x2(words, categories, edges, matrix)
-            print(raatsel)
-            raatsel.solve(strategies, True)
 
+            raatsel.solve(strategies)
 
             if raatsel.is_solved():
                 break
@@ -109,15 +107,17 @@ class RaatselGenerator:
         result = mapping.replace(") (", "|").replace("mapping = (", "").replace(")", "").replace(" ", "")
         mapping = result.split("|")
 
-        words = []
-        categories = []
-        edges = []
+        words = [None] * 30
+        categories = [None] * 7
+        edges = [None] * 6
         for entry in mapping:
             split = entry.split("->")
+
+            index = int(split[0][1:])
             if 'W' in split[0]:
-                words.append(split[1])
+                words[index] = split[1]
             if 'C' in split[0]:
-                categories.append(split[1])
+                categories[index] = split[1]
             if 'E' in split[0]:
-                edges.append(split[1])
+                edges[index] = split[1]
         return words, categories, edges
