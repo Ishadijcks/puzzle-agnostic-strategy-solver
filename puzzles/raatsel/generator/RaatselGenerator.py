@@ -53,20 +53,21 @@ class RaatselGenerator:
     def generate_from_file(word_graph, target_file, strategies, size=RaatselSize.TwoByTwo) -> AbstractRaatsel:
 
         raatsel = None
+        database_graph = RaatselGenerator.generate_m(10, strategies)
+
         while True:
             print("starting mapping...")
-            database_graph = DummyRaatsel2x2()
-
-            # database_graph = RaatselGenerator.generate_m(5, strategies)
+            # database_graph = DummyRaatsel2x2()
 
             database_graph.write_glasgow_to_file('database.txt')
             pattern_file = os.path.join('cache', 'database.txt')
 
             process = subprocess.Popen(
-                ['./bin/glasgow_subgraph_solver', '--print-all-solutions', '--parallel', '--timeout', '30',
+                ['./bin/glasgow_subgraph_solver', '--timeout', '30',
                  pattern_file, target_file],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE, text=True)
+            process.wait()
             stdout, stderr = process.communicate()
             if stderr:
                 print("failed", stderr)
@@ -84,6 +85,8 @@ class RaatselGenerator:
                 raatsel.solve(strategies)
 
                 if raatsel.is_solved():
+                    print("Successfully generated raatsel!", raatsel)
+                    exit(0)
                     break
                 else:
                     print("solving failed")

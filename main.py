@@ -1,6 +1,7 @@
 from puzzles.raatsel.RaatselSize import RaatselSize
 from puzzles.raatsel.generator.RaatselGenerator import RaatselGenerator
 from puzzles.raatsel.generator.WordGraph import WordGraph
+from puzzles.raatsel.generator.Wordnet import Wordnet
 from puzzles.raatsel.instances.SoloRaatsel import get_realistic_2x2_raatsel
 from puzzles.raatsel.strategies.EliminateCategories import EliminateCategories
 from puzzles.raatsel.strategies.EliminatePlacedElements import EliminatePlacedElements
@@ -9,6 +10,7 @@ from puzzles.sudoku.instances.sudoku_easy_1 import get_easy1
 from puzzles.sudoku.strategies.HiddenSingle import HiddenSingle
 from puzzles.sudoku.strategies.NakedSingle import NakedSingle
 from rater.Rater import Rater
+from nltk.corpus import wordnet as wn
 
 raatsel_strategies = [EliminateCategories, EliminateWords, EliminatePlacedElements]
 
@@ -57,7 +59,18 @@ def test_generate_m():
     print(results)
 
 
+def generate_from_word():
+    wordnet = Wordnet(
+        blacklisted_categories=['matter', 'whole', 'entity', 'physical_entity', 'object', 'material', 'part', 'fluid',
+                                'liquid', 'chemical'], max_words=500, max_depth=2)
+    graph = wordnet.generate_word_graph(wn.synset('pole.n.01'))
+    graph.write_glasgow_to_file('pole.txt')
+    return graph
+
+
 def main():
+    # graph = generate_from_word()
+
     raatsel = RaatselGenerator.generate_from_file(WordGraph.from_glasgow_file("pole.txt"), 'cache/pole.txt',
                                                   raatsel_strategies, RaatselSize.TwoByTwo)
     raatsel.solve(raatsel_strategies)

@@ -24,7 +24,8 @@ class WordGraph:
             self.words.append(source)
         if target not in self.categories:
             self.categories.append(target)
-        self.edges.append((source, target))
+        if (source, target) not in self.edges:
+            self.edges.append((source, target))
 
     def has_edge(self, source, target):
         return (source, target) in self.edges
