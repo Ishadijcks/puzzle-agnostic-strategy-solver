@@ -6,7 +6,7 @@ from puzzles.raatsel.instances.SoloRaatsel import get_realistic_2x2_raatsel
 from puzzles.raatsel.strategies.EliminateCategories import EliminateCategories
 from puzzles.raatsel.strategies.EliminatePlacedElements import EliminatePlacedElements
 from puzzles.raatsel.strategies.EliminateWords import EliminateWords
-from puzzles.sudoku.instances.sudoku_easy_1 import get_easy1
+from puzzles.sudoku.instances.sudoku_easy_1 import get_easy1, get_easy2, get_easy3
 from puzzles.sudoku.strategies.HiddenSingle import HiddenSingle
 from puzzles.sudoku.strategies.NakedSingle import NakedSingle
 from rater.Rater import Rater
@@ -40,7 +40,7 @@ def rate_realistic_raatsel():
 
 
 def rate_easy_sudoku():
-    sudoku = get_easy1()
+    sudoku = get_easy3()
     rater = Rater(10)
     rater.time_expanded_rating(sudoku, [HiddenSingle, NakedSingle])
 
@@ -69,7 +69,16 @@ def generate_from_word():
 
 
 def main():
-    rate_easy_sudoku()
+    raatsels = RaatselGenerator.generate_from_file(WordGraph.from_glasgow_file("stitched.txt"), 'cache/stitched.txt',
+                                                   raatsel_strategies, RaatselSize.TwoByTwo)
+    print("Found", len(raatsels), "raatsels!")
+    for r in raatsels:
+        print(r)
+        print(sorted(r.available_words))
+        r.solve(raatsel_strategies)
+        r.plot()
+        print("solved?", r.is_solved())
+    # raatsel.solve(raatsel_strategies)
 
 
 if __name__ == '__main__':

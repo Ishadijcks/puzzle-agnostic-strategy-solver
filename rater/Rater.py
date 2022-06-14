@@ -10,6 +10,8 @@ class Rater:
         print(starting_hash)
         time_left = starting_hash.count("x")
         print(f"Starting rating with {time_left} steps")
+
+        amount_over_time = []
         hashes_over_time = [
             [starting_hash]
         ]
@@ -18,7 +20,9 @@ class Rater:
             if i > 1:
                 hashes_over_time[i-1] = None
 
+            amount_over_time.append(len(current_hashes))
             print(len(current_hashes), "hashes at timestep", i)
+            print("hashes over time", amount_over_time)
 
             new_hashes = set()
             for current_hash in current_hashes:

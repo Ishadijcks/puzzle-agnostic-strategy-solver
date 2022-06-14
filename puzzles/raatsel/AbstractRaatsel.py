@@ -2,6 +2,8 @@ import os
 from abc import abstractmethod
 import numpy as np
 from tabulate import tabulate
+import matplotlib.pyplot as plt
+from matplotlib.patches import RegularPolygon
 
 from puzzles.AbstractPuzzle import AbstractPuzzle
 from solver.NumberPlaced import NumberPlaced
@@ -189,6 +191,53 @@ class AbstractRaatsel(AbstractPuzzle):
             if len(w) == 0:
                 return True
         return False
+
+    def plot(self):
+        coord = [[0, 5, -1], [1, 4, -1], [2, 3, -1], [3, 2, -1], [3, 1, 0], [3, 0, 1], [3, -1, 2], [2, -2, 2],
+                 [1, -3, 2],
+                 [0, -3, 3], [-1, -3, 2], [-2, -2, 2], [-3, -1, 2], [-3, 0, 1], [-3, 1, 0], [-3, 2, -1], [-2, 3, -1],
+                 [-1, 4, -1],
+                 # Middle ring
+                 [0, 3, -1], [1, 2, -1], [2, 1, -1], [2, 0, 0], [2, -1, 1], [1, -2, 1], [0, -3, 1], [-1, -2, 1],
+                 [-2, -1, 1],
+                 [-2, 0, 0], [-2, 1, -1], [-1, 2, -1],
+                 # Inner ring
+                 [0, 1, -1], [1, 0, -1], [1, -1, 0], [0, -2, 0], [-1, -1, 0], [-1, 0, -1],
+                 [0, 0, 0],
+
+                 # Edges
+                 [2, 5, -1], [4, 0, 0], [2, -5, 1], [-2, -5, 1], [-4, 0, 0], [-2, 5, -1]
+                 ]
+        category_indices = [18, 20, 22, 24, 26, 28, 36]
+        colors = ["white" for _ in range(0, 37)]
+        edge_colors = ["k" if i < 37 else 'w' for i in range(0, 44)]
+        labels = [] + self.available_words + self.available_edges
+
+        for index in category_indices:
+            labels.insert(index, self.available_categories[category_indices.index(index)])
+            colors.insert(index, 'green')
+
+        # Replace underscore with line breaks
+        labels = [label.replace('_', '\n') for label in labels]
+
+        horizontal_coords = [c[0] for c in coord]
+
+        vertical_coords = [2. * np.sin(np.radians(60)) * (c[1] - c[2]) / 3. for c in coord]
+
+        fig, ax = plt.subplots(1)
+        ax.set_aspect('equal')
+
+        for x, y, c, l, e in zip(horizontal_coords, vertical_coords, colors, labels, edge_colors):
+            hexagon = RegularPolygon((x, y), numVertices=6, radius=2. / 3.,
+                                     facecolor=c,
+                                     orientation=np.radians(30), alpha=0.2, edgecolor=e)
+            ax.add_patch(hexagon)
+            ax.text(x, y, l, ha='center', va='center', size=6)
+
+        # Add scatter points in hexagon centres
+        ax.scatter(horizontal_coords, vertical_coords, alpha=0)
+
+        plt.show()
 
     def __str__(self):
         return "Raatsel\n" \

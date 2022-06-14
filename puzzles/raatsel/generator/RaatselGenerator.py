@@ -44,26 +44,26 @@ class RaatselGenerator:
                           raatsel.matrix)
 
     @staticmethod
-    def generate_from_wordgraph(word_graph, size) -> AbstractRaatsel:
+    def generate_from_wordgraph(word_graph, size) -> [AbstractRaatsel]:
         file_name = 'temp.txt'
         word_graph.write_glasgow_to_file(file_name)
         return RaatselGenerator.generate_from_file(word_graph, os.path.join('cache', file_name), size)
 
     @staticmethod
-    def generate_from_file(word_graph, target_file, strategies, size=RaatselSize.TwoByTwo) -> AbstractRaatsel:
+    def generate_from_file(word_graph, target_file, strategies, size=RaatselSize.TwoByTwo) -> [AbstractRaatsel]:
 
         raatsel = None
         database_graph = RaatselGenerator.generate_m(10, strategies)
 
         while True:
             print("starting mapping...")
-            # database_graph = DummyRaatsel2x2()
+            database_graph = DummyRaatsel2x2()
 
             database_graph.write_glasgow_to_file('database.txt')
             pattern_file = os.path.join('cache', 'database.txt')
 
             process = subprocess.Popen(
-                ['./bin/glasgow_subgraph_solver', '--timeout', '30',
+                ['./bin/glasgow_subgraph_solver', '--print-all-solutions', '--timeout', '30',
                  pattern_file, target_file],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE, text=True)
@@ -73,6 +73,8 @@ class RaatselGenerator:
                 print("failed", stderr)
             # assert not stderr
             solutions = RaatselGenerator.parse_multiple_solutions(stdout, size)
+            # print(solutions)
+            raatsels = []
             for words, categories, edges in solutions:
 
                 matrix = word_graph.to_matrix(words, categories, edges)
@@ -85,14 +87,12 @@ class RaatselGenerator:
                 raatsel.solve(strategies)
 
                 if raatsel.is_solved():
-                    print("Successfully generated raatsel!", raatsel)
-                    exit(0)
-                    break
+                    # print("Successfully generated raatsel!", raatsel)
+                    raatsels.append(raatsel)
                 else:
                     print("solving failed")
-
-        print("Successfully generated raatsel!", raatsel)
-        return raatsel
+            if raatsels:
+                return raatsels
 
     @staticmethod
     def parse_solutions(solutions_string, size):
