@@ -12,6 +12,7 @@ class Sudoku(AbstractPuzzle):
         return False
 
     def from_hash(self, hash_string):
+        hash_string = hash_string.replace(",", "").replace("x", "0")
         return Sudoku(hash_string)
 
     def __init__(self, clues):
@@ -75,11 +76,14 @@ class Sudoku(AbstractPuzzle):
         return self.grid_candidates[3 * index_y: 3 * index_y + 3, 3 * index_x: 3 * index_x + 3]
 
     def get_hash(self):
-        res = ""
+        res = []
         for y in range(0, 9):
             for x in range(0, 9):
-                res += str(int(self.solved_grid[y, x]))
-        return res
+                if self.solved_grid[y, x] == 0:
+                    res.append('x')
+                else:
+                    res.append(str(int(self.solved_grid[y, x])))
+        return ','.join(res)
 
     @staticmethod
     def get_state_transitions(current_hash, next_hash):
