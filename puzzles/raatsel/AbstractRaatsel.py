@@ -4,6 +4,7 @@ import numpy as np
 from tabulate import tabulate
 
 from puzzles.AbstractPuzzle import AbstractPuzzle
+from solver.NumberPlaced import NumberPlaced
 
 
 class AbstractRaatsel(AbstractPuzzle):
@@ -15,6 +16,8 @@ class AbstractRaatsel(AbstractPuzzle):
         self.available_edges = edges
         self.available_groups = edges + categories
 
+        self.word_was_solved = []
+        self.category_was_solved = []
         self.matrix = matrix
 
         assert len(self.available_words) == self.get_word_cell_count()
@@ -24,10 +27,12 @@ class AbstractRaatsel(AbstractPuzzle):
         self.word_candidates = []
         for i in range(0, len(self.available_words)):
             self.word_candidates.append(list(range(0, len(self.available_words))))
+            self.word_was_solved.append(False)
 
         self.category_candidates = []
         for i in range(0, len(self.available_categories)):
             self.category_candidates.append(list(range(0, len(self.available_categories))))
+            self.category_was_solved.append(False)
 
     def print_state(self):
         print("==== WORDS ====")
@@ -114,7 +119,7 @@ class AbstractRaatsel(AbstractPuzzle):
             if len(w) == 1:
                 words.append(w[0])
             else:
-                words.append("0")
+                words.append("x")
         word_hash = ','.join(words)
 
         categories = []
@@ -122,24 +127,46 @@ class AbstractRaatsel(AbstractPuzzle):
             if len(c) == 1:
                 categories.append(c[0])
             else:
-                categories.append("0")
+                categories.append("x")
         category_hash = ','.join(categories)
 
-        return word_hash + "-" + category_hash
+        return word_hash + "," + category_hash
 
     def remove_removals(self, removals):
+        numbers_placed = []
         for removal in removals:
             if removal.x == "word":
                 for candidate in removal.candidates:
                     if candidate in self.word_candidates[removal.y]:
+
                         self.word_candidates[removal.y].remove(candidate)
+
+                        # Now check if this is the first time there is only one candidate left, this means a placement
+                        if len(self.word_candidates[removal.y]) == 1 and \
+                                self.word_was_solved[removal.y] == False:
+                            placed_value = self.word_candidates[removal.y][0]
+                            self.word_was_solved[removal.y] = True
+                            # print(f"placed number {placed_value} on ({removal.y}, {removal.x} with {removal.strategy})")
+
+                            index = removal.y
+                            numbers_placed.append(
+                                NumberPlaced(index, placed_value, removal.strategy, removal.difficulty))
+
             if removal.x == "category":
                 for candidate in removal.candidates:
                     if candidate in self.category_candidates[removal.y]:
                         self.category_candidates[removal.y].remove(candidate)
 
-    def from_hash(self, hash_string):
-        pass
+                        if len(self.category_candidates[removal.y]) == 1 and \
+                                self.category_was_solved[removal.y] == False:
+                            placed_value = self.category_candidates[removal.y][0]
+                            self.category_was_solved[removal.y] = True
+
+                            index = removal.y + self.get_word_cell_count()
+                            numbers_placed.append(
+                                NumberPlaced(index, placed_value, removal.strategy, removal.difficulty))
+
+        return numbers_placed
 
     def to_glasgow(self):
         res = ""

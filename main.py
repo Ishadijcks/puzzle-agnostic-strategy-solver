@@ -69,12 +69,7 @@ def generate_from_word():
 
 
 def main():
-    # graph = generate_from_word()
-
-    raatsel = RaatselGenerator.generate_from_file(WordGraph.from_glasgow_file("pole.txt"), 'cache/pole.txt',
-                                                  raatsel_strategies, RaatselSize.TwoByTwo)
-    raatsel.solve(raatsel_strategies)
-    print("Solvable?", raatsel.is_solved())
+    rate_easy_sudoku()
 
 
 if __name__ == '__main__':

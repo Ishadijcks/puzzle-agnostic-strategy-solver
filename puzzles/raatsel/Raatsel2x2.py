@@ -3,6 +3,25 @@ from puzzles.raatsel.AbstractRaatsel import AbstractRaatsel
 
 class Raatsel2x2(AbstractRaatsel):
 
+    def from_hash(self, hash_string):
+        both = hash_string.split(",")
+        words = both[:self.get_word_cell_count()]
+        categories = both[self.get_word_cell_count()::]
+
+        raatsel = Raatsel2x2(self.available_words, self.available_categories, self.available_edges, self.matrix)
+
+        for i in range(0, len(words)):
+            word = words[i]
+            if word != 'x':
+                raatsel.word_candidates[i] = [int(word)]
+
+        for i in range(0, len(categories)):
+            category = categories[i]
+            if category != 'x':
+                raatsel.category_candidates[i] = [int(category)]
+
+        return raatsel
+
     def __init__(self, words, categories, edges, matrix):
         super().__init__(2, words, categories, edges, matrix)
 

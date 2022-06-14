@@ -8,18 +8,21 @@ class Rater:
     def time_expanded_rating(self, puzzle: AbstractPuzzle, strategies):
         starting_hash = puzzle.get_hash()
         print(starting_hash)
-        time_left = starting_hash.count("0")
+        time_left = starting_hash.count("x")
         print(f"Starting rating with {time_left} steps")
         hashes_over_time = [
             [starting_hash]
         ]
         for i in range(0, time_left + 1):
             current_hashes = hashes_over_time[i]
+            if i > 1:
+                hashes_over_time[i-1] = None
+
             print(len(current_hashes), "hashes at timestep", i)
 
             new_hashes = set()
             for current_hash in current_hashes:
-                assert current_hash.count("0") == time_left - i
+                assert current_hash.count("x") == time_left - i
                 puzzle = puzzle.from_hash(current_hash)
                 numbers_placed = puzzle.solve_step(strategies)
                 while isinstance(numbers_placed, bool):
@@ -39,7 +42,7 @@ class Rater:
     def get_next_hashes(previous_hash, placed_numbers):
         res = []
         for placed_number in placed_numbers:
-            hash_list = list(previous_hash)
+            hash_list = previous_hash.split(",")
             hash_list[placed_number.index] = str(placed_number.value)
-            res.append(''.join(hash_list))
+            res.append(','.join(hash_list))
         return res

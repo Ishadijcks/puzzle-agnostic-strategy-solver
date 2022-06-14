@@ -7,6 +7,10 @@ from solver.NumberPlaced import NumberPlaced
 
 class Sudoku(AbstractPuzzle):
 
+    # TODO(Check candidates)
+    def is_impossible(self):
+        return False
+
     def from_hash(self, hash_string):
         return Sudoku(hash_string)
 
